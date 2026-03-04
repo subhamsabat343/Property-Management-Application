@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents {
+  id           Int       @id
+  related_type String?   @db.VarChar
+  related_id   Int?
+  file_path    String?   @db.VarChar
+  uploaded_by  Int?
+  created_at   DateTime? @db.Timestamp(6)
+  users        users?    @relation(fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model expenses {
+  id           Int         @id
+  property_id  Int?
+  category     String?     @db.VarChar
+  amount       Decimal?    @db.Decimal
+  expense_date DateTime?   @db.Date
+  description  String?
+  created_at   DateTime?   @db.Timestamp(6)
+  properties   properties? @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model leases {
+  id               Int        @id
+  unit_id          Int?
+  tenant_id        Int?
+  start_date       DateTime?  @db.Date
+  end_date         DateTime?  @db.Date
+  rent_amount      Decimal?   @db.Decimal
+  security_deposit Decimal?   @db.Decimal
+  lease_status     String?    @db.VarChar
+  created_at       DateTime?  @db.Timestamp(6)
+  tenants          tenants?   @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  units            units?     @relation(fields: [unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payments         payments[]
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model maintenance_requests {
+  id          Int       @id
+  unit_id     Int?
+  tenant_id   Int?
+  title       String?   @db.VarChar
+  description String?
+  priority    String?   @db.VarChar
+  status      String?   @db.VarChar
+  assigned_to Int?
+  created_at  DateTime? @db.Timestamp(6)
+  users       users?    @relation(fields: [assigned_to], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tenants     tenants?  @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  units       units?    @relation(fields: [unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model organizations {
+  id                Int          @id @default(1)
+  name              String?      @default("") @db.VarChar
+  subscription_plan String?      @default("") @db.VarChar
+  created_at        DateTime?    @db.Timestamp(6)
+  properties        properties[]
+  users             users[]
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model payments {
+  id                    Int       @id
+  lease_id              Int?
+  amount                Decimal?  @db.Decimal
+  payment_date          DateTime? @db.Date
+  payment_method        String?   @db.VarChar
+  transaction_reference String?   @db.VarChar
+  status                String?   @db.VarChar
+  created_at            DateTime? @db.Timestamp(6)
+  leases                leases?   @relation(fields: [lease_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model properties {
+  id              Int            @id
+  organization_id Int?
+  owner_id        Int?
+  name            String?        @db.VarChar
+  description     String?
+  address_line1   String?        @db.VarChar
+  city            String?        @db.VarChar
+  state           String?        @db.VarChar
+  country         String?        @db.VarChar
+  zip_code        String?        @db.VarChar
+  total_units     Int?
+  created_at      DateTime?      @db.Timestamp(6)
+  expenses        expenses[]
+  organizations   organizations? @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users           users?         @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  units           units[]
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model tenants {
+  id                   Int                    @id
+  user_id              Int?
+  date_of_birth        DateTime?              @db.Date
+  id_proof_type        String?                @db.VarChar
+  id_proof_value       String?                @db.VarChar
+  emergency_contact    String?                @db.VarChar
+  created_at           DateTime?              @db.Timestamp(6)
+  leases               leases[]
+  maintenance_requests maintenance_requests[]
+  users                users?                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model units {
+  id                   Int                    @id
+  property_id          Int?
+  unit_number          String?                @db.VarChar
+  floor                Int?
+  bedrooms             Int?
+  bathrooms            Int?
+  rent_amount          Decimal?               @db.Decimal
+  status               String?                @db.VarChar
+  created_at           DateTime?              @db.Timestamp(6)
+  leases               leases[]
+  maintenance_requests maintenance_requests[]
+  properties           properties?            @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model users {
+  id                   Int                    @id
+  organization_id      Int?
+  full_name            String?                @db.VarChar
+  email                String?                @unique @db.VarChar
+  phone                String?                @db.VarChar
+  password_hash        String?                @db.VarChar
+  role                 String?                @db.VarChar
+  status               String?                @db.VarChar
+  created_at           DateTime?              @db.Timestamp(6)
+  documents            documents[]
+  maintenance_requests maintenance_requests[]
+  properties           properties[]
+  tenants              tenants[]
+  organizations        organizations?         @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}

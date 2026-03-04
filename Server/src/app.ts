@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import routes from "./routes/index.ts";
+import routes from "@/routes/index.ts";
 
 const app = express();
 
@@ -13,6 +13,6 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", message: "Server is running" });
 });
 
-app.use("/api", routes);
+app.use("/", routes);
 
 export default app;
