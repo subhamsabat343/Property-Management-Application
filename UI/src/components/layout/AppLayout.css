@@ -1,0 +1,27 @@
+/* ==============================
+   AppLayout
+   ============================== */
+
+.app-layout {
+  min-height: 100vh;
+}
+
+.app-layout__main {
+  margin-left: var(--sidebar-width);
+  margin-top: var(--navbar-height);
+  padding: var(--space-8);
+  min-height: calc(100vh - var(--navbar-height));
+  transition: margin-left var(--transition-slow);
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.app-layout--collapsed .app-layout__main {
+  margin-left: var(--sidebar-collapsed-width);
+}
+
+@media (max-width: 768px) {
+  .app-layout__main {
+    margin-left: 0;
+    padding: var(--space-4);
+  }
+}
