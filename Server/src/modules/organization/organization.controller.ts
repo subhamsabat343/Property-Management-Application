@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { OrganizationService } from "./organization.service.ts";
+import { OrganizationInput } from "./organization.types.ts";
 
 export const OrganizationController = {
   getOrganizations: async (req: Request, res: Response): Promise<void> => {
@@ -43,13 +44,18 @@ export const OrganizationController = {
 
   createOrganization: async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id: _id, ...payload } = req.body;
-      const data = await OrganizationService.create(
-        payload as Parameters<typeof OrganizationService.create>[0]
-      );
-      res
-        .status(201)
-        .json({ success: true, data, message: "Created successfully" });
+      const payload: OrganizationInput = {
+        name: req.body.name,
+        subscription_plan: req.body.subscription_plan,
+      };
+
+      const data = await OrganizationService.create(payload);
+
+      res.status(201).json({
+        success: true,
+        data,
+        message: "Created successfully",
+      });
     } catch (error) {
       res.status(500).json({
         success: false,
