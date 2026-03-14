@@ -2,32 +2,32 @@ import prisma from "@/core/database/prismaClient.ts";
 import { Prisma } from "@generated/prisma";
 
 type CreateInput = Omit<
-  Prisma.propertiesUncheckedCreateInput,
+  Prisma.unitsUncheckedCreateInput,
   "id" | "created_at" | "last_updated_at"
 >;
 type UpdateInput = Omit<
-  Prisma.propertiesUncheckedUpdateInput,
+  Prisma.unitsUncheckedUpdateInput,
   "id" | "created_at" | "last_updated_at"
 >;
 
-export const PropertyService = {
+export const UnitService = {
   getAll: async () => {
-    return prisma.properties.findMany();
+    return prisma.units.findMany();
   },
 
   getById: async (id: number) => {
-    return prisma.properties.findUnique({ where: { id } });
+    return prisma.units.findUnique({ where: { id } });
   },
 
   create: async (data: CreateInput) => {
-    return prisma.properties.create({ data });
+    return prisma.units.create({ data });
   },
 
   update: async (id: number, data: UpdateInput) => {
-    return prisma.properties.update({ where: { id }, data });
+    return prisma.units.update({ where: { id }, data });
   },
 
   delete: async (id: number) => {
-    return prisma.properties.delete({ where: { id } });
+    return prisma.units.delete({ where: { id } });
   },
 };
