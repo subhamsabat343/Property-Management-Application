@@ -10,30 +10,32 @@ datasource db {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model documents {
-  id           Int       @id
+  id Int @id @default(autoincrement())
   related_type String?   @db.VarChar
   related_id   Int?
   file_path    String?   @db.VarChar
   uploaded_by  Int?
-  created_at   DateTime? @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   users        users?    @relation(fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model expenses {
-  id           Int         @id
+  id Int @id @default(autoincrement())
   property_id  Int?
   category     String?     @db.VarChar
   amount       Decimal?    @db.Decimal
   expense_date DateTime?   @db.Date
   description  String?
-  created_at   DateTime?   @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   properties   properties? @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model leases {
-  id               Int        @id
+  id Int @id @default(autoincrement())
   unit_id          Int?
   tenant_id        Int?
   start_date       DateTime?  @db.Date
@@ -41,7 +43,8 @@ model leases {
   rent_amount      Decimal?   @db.Decimal
   security_deposit Decimal?   @db.Decimal
   lease_status     String?    @db.VarChar
-  created_at       DateTime?  @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   tenants          tenants?   @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   units            units?     @relation(fields: [unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   payments         payments[]
@@ -49,7 +52,7 @@ model leases {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model maintenance_requests {
-  id          Int       @id
+  id Int @id @default(autoincrement())
   unit_id     Int?
   tenant_id   Int?
   title       String?   @db.VarChar
@@ -57,37 +60,40 @@ model maintenance_requests {
   priority    String?   @db.VarChar
   status      String?   @db.VarChar
   assigned_to Int?
-  created_at  DateTime? @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   users       users?    @relation(fields: [assigned_to], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tenants     tenants?  @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   units       units?    @relation(fields: [unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model organizations {
-  id                Int          @id @default(1)
+  id Int @id @default(autoincrement())
   name              String?      @default("") @db.VarChar
   subscription_plan String?      @default("") @db.VarChar
-  created_at        DateTime?    @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   properties        properties[]
   users             users[]
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model payments {
-  id                    Int       @id
+  id Int @id @default(autoincrement())
   lease_id              Int?
   amount                Decimal?  @db.Decimal
   payment_date          DateTime? @db.Date
   payment_method        String?   @db.VarChar
   transaction_reference String?   @db.VarChar
   status                String?   @db.VarChar
-  created_at            DateTime? @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   leases                leases?   @relation(fields: [lease_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model properties {
-  id              Int            @id
+  id Int @id @default(autoincrement())
   organization_id Int?
   owner_id        Int?
   name            String?        @db.VarChar
@@ -98,7 +104,8 @@ model properties {
   country         String?        @db.VarChar
   zip_code        String?        @db.VarChar
   total_units     Int?
-  created_at      DateTime?      @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   expenses        expenses[]
   organizations   organizations? @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users           users?         @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -107,13 +114,14 @@ model properties {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model tenants {
-  id                   Int                    @id
+  id Int @id @default(autoincrement())
   user_id              Int?
   date_of_birth        DateTime?              @db.Date
   id_proof_type        String?                @db.VarChar
   id_proof_value       String?                @db.VarChar
   emergency_contact    String?                @db.VarChar
-  created_at           DateTime?              @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   leases               leases[]
   maintenance_requests maintenance_requests[]
   users                users?                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -121,7 +129,7 @@ model tenants {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model units {
-  id                   Int                    @id
+  id Int @id @default(autoincrement())
   property_id          Int?
   unit_number          String?                @db.VarChar
   floor                Int?
@@ -129,7 +137,8 @@ model units {
   bathrooms            Int?
   rent_amount          Decimal?               @db.Decimal
   status               String?                @db.VarChar
-  created_at           DateTime?              @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   leases               leases[]
   maintenance_requests maintenance_requests[]
   properties           properties?            @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -137,7 +146,7 @@ model units {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model users {
-  id                   Int                    @id
+  id Int @id @default(autoincrement())
   organization_id      Int?
   full_name            String?                @db.VarChar
   email                String?                @unique @db.VarChar
@@ -145,7 +154,8 @@ model users {
   password_hash        String?                @db.VarChar
   role                 String?                @db.VarChar
   status               String?                @db.VarChar
-  created_at           DateTime?              @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_at DateTime? @updatedAt @db.Timestamp(6)
   documents            documents[]
   maintenance_requests maintenance_requests[]
   properties           properties[]

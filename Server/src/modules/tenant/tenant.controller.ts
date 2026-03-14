@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { PropertyService } from "./property.service.ts";
+import { TenantService } from "./tenant.service.ts";
 
-export const PropertyController = {
-  getPropertys: async (req: Request, res: Response): Promise<void> => {
+export const TenantController = {
+  getTenants: async (req: Request, res: Response): Promise<void> => {
     try {
-      const data = await PropertyService.getAll();
+      const data = await TenantService.getAll();
       res
         .status(200)
         .json({ success: true, data, message: "Retrieved successfully" });
@@ -17,14 +17,14 @@ export const PropertyController = {
     }
   },
 
-  getPropertyById: async (req: Request, res: Response): Promise<void> => {
+  getTenantById: async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id as string, 10);
       if (isNaN(id)) {
         res.status(400).json({ success: false, message: "Invalid ID format" });
         return;
       }
-      const data = await PropertyService.getById(id);
+      const data = await TenantService.getById(id);
       if (!data) {
         res.status(404).json({ success: false, message: "Not found" });
         return;
@@ -41,11 +41,11 @@ export const PropertyController = {
     }
   },
 
-  createProperty: async (req: Request, res: Response): Promise<void> => {
+  createTenant: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id: _id, ...payload } = req.body;
-      const data = await PropertyService.create(
-        payload as Parameters<typeof PropertyService.create>[0]
+      const data = await TenantService.create(
+        payload as Parameters<typeof TenantService.create>[0]
       );
       res
         .status(201)
@@ -59,7 +59,7 @@ export const PropertyController = {
     }
   },
 
-  updateProperty: async (req: Request, res: Response): Promise<void> => {
+  updateTenant: async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id as string, 10);
       if (isNaN(id)) {
@@ -67,9 +67,9 @@ export const PropertyController = {
         return;
       }
       const { id: _id, ...payload } = req.body;
-      const data = await PropertyService.update(
+      const data = await TenantService.update(
         id,
-        payload as Parameters<typeof PropertyService.update>[1]
+        payload as Parameters<typeof TenantService.update>[1]
       );
       res
         .status(200)
@@ -83,14 +83,14 @@ export const PropertyController = {
     }
   },
 
-  deleteProperty: async (req: Request, res: Response): Promise<void> => {
+  deleteTenant: async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id as string, 10);
       if (isNaN(id)) {
         res.status(400).json({ success: false, message: "Invalid ID format" });
         return;
       }
-      await PropertyService.delete(id);
+      await TenantService.delete(id);
       res.status(200).json({ success: true, message: "Deleted successfully" });
     } catch (error) {
       res.status(500).json({
